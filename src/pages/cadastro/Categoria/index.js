@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FormField from '../../../components/FormField';
 import PageDefault from '../../../components/PageDefault';
+import Button from '../../../components/Button';
 
 function CadastroCategoria() {
   const [categorias, setCategorias] = useState([]);
@@ -28,6 +29,17 @@ function CadastroCategoria() {
     setValue(evento.target.getAttribute('name'), evento.target.value);
   }
 
+  useEffect(() => {
+    const URL_TOP = 'http://localhost:8080/categorias';
+
+    fetch(URL_TOP)
+      .then(async (respostaServidor) => {
+        const respostaJSON = await respostaServidor.json();
+        setCategorias([...respostaJSON]);
+      })
+      .catch();
+  }, []);
+
   return (
     <PageDefault>
       <h1>Cadastro de Categoria</h1>
@@ -41,16 +53,13 @@ function CadastroCategoria() {
           onChange={handleChange}
         />
 
-        <div>
-          <label>
-            Descrição:
-            <textarea
-              value={novaCategoria.descricao}
-              name="descricao"
-              onChange={handleChange}
-            />
-          </label>
-        </div>
+        <FormField
+          label="Descrição"
+          type="textarea"
+          name="descricao"
+          value={novaCategoria.descricao}
+          onChange={handleChange}
+        />
 
         <FormField
           label="Cor"
@@ -60,19 +69,17 @@ function CadastroCategoria() {
           onChange={handleChange}
         />
 
-        <button type="submit">
+        <Button>
           Cadastrar
-        </button>
+        </Button>
       </form>
 
       <ul>
-        {categorias.map((categoria, indice) => {
-          return (
-            <li key={ `${categoria.nome}${indice}` }>
-              {categoria.nome}
-            </li>
-          )
-        })}
+        {categorias.map((categoria, indice) => (
+          <li key={`${categoria.nome}${indice}`}>
+            {categoria.nome}
+          </li>
+        ))}
       </ul>
 
       <Link to="/">
